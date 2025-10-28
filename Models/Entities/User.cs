@@ -13,6 +13,9 @@ namespace TaskManager.Api.Models.Entities
         public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
+        public string PasswordSalt { get; set; } = string.Empty;
+
+        [Required]
         public string Email { get; set; } = string.Empty;
 
         public ICollection<TaskItem> Tasks { get; set; } = new List<TaskItem>();
