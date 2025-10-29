@@ -10,10 +10,18 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(AppDbContext context) : ControllerBase
+    public class UsersController : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly AppDbContext _context;
+        private readonly JwtService _jwtService;
+
         private readonly PasswordService _passwordService = new PasswordService();
+
+        public UsersController(AppDbContext context, JwtService jwtService)
+        {
+            _context = context;
+            _jwtService = jwtService;
+        }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterDto userRegisterDto)
@@ -41,9 +49,11 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
-            if (user == null) return BadRequest("User not found.");
-            if (!_passwordService.VerifyPassword(userLoginDto.Password, user.PasswordHash, user.PasswordSalt)) return BadRequest("Wrong credentials!");
-            return Ok(new { message = "Login succesful!"});
+            if (user == null) return Unauthorized("Invalid Credentials!");
+            if (!_passwordService.VerifyPassword(userLoginDto.Password, user.PasswordHash, user.PasswordSalt)) return Unauthorized("Invalid Credentials!");
+
+            var token = _jwtService.GenerateToken(user);
+            return Ok(new { Token = token});
         }
     }
 }

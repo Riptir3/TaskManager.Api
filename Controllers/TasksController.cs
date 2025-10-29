@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TaskManager.Api.Data;
 using TaskManager.Api.Models.Entities;
 
 namespace TaskManager.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TasksController(AppDbContext context) : ControllerBase
@@ -13,25 +16,33 @@ namespace TaskManager.Api.Controllers
         private readonly AppDbContext _context = context;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
+        public async Task<IActionResult> GetUserTasks()
         {
-            return await _context.Tasks.ToListAsync();
+            var userid = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var tasks = await _context.Tasks
+                                      .Where(t => t.UserId == userid)
+                                      .ToListAsync();
+            return Ok(tasks);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<TaskItem>> GetTask(int id)
+        public async Task<IActionResult> GetTask(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
+
             if (task == null)
-            {
-                return NotFound();
-            }
+                return NotFound("Task not found or you don't have access to it.");
+
             return Ok(task);
         }
 
         [HttpPost]
-        public async Task<ActionResult<TaskItem>> CreateTask(TaskItem task)
+        public async Task<IActionResult> CreateTask([FromBody] TaskItem task)
         {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            task.UserId = userId;
+
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
 
@@ -39,11 +50,19 @@ namespace TaskManager.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateTask(int id, TaskItem task)
+        public async Task<IActionResult> UpdateTask(int id, [FromBody] TaskItem updatedTask)
         {
-            if (id != task.Id) return BadRequest();
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
 
-            _context.Entry(task).State = EntityState.Modified;
+            if (task == null)
+                return NotFound("Task not found or you don't have access to it.");
+
+            task.Title = updatedTask.Title;
+            task.Description = updatedTask.Description;
+            task.DueDate = updatedTask.DueDate;
+            task.IsCompleted = updatedTask.IsCompleted;
+
             await _context.SaveChangesAsync();
             return Ok(task);
         }
@@ -51,14 +70,16 @@ namespace TaskManager.Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
+
             if (task == null)
-            {
-                return NotFound();
-            }
+                return NotFound("Task not found or you don't have access to it.");
+
             _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();
-            return Ok(task);
+
+            return NoContent();
         }
     }
 }
