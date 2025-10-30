@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using TaskManager.Api.Data;
+using TaskManager.Api.Filters;
+using TaskManager.Api.Middlewares;
 using TaskManager.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +27,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
        });
 
 builder.Services.AddScoped<JwtService>();
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationFilter>();
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -70,6 +75,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<ValidationErrorMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

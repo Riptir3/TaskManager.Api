@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -16,12 +15,47 @@ namespace TaskManager.Api.Controllers
         private readonly AppDbContext _context = context;
 
         [HttpGet]
-        public async Task<IActionResult> GetUserTasks()
+        public async Task<IActionResult> GetUserTasks(
+            [FromQuery] bool? isCompleted,
+            [FromQuery] DateTime? dueBefore,
+            [FromQuery] string? search,
+            [FromQuery] string? sortBy,
+            [FromQuery] string? order = "asc")
         {
             var userid = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var tasks = await _context.Tasks
-                                      .Where(t => t.UserId == userid)
-                                      .ToListAsync();
+
+            var query = _context.Tasks
+                .Where(t => t.UserId == userid)
+                .AsQueryable();
+
+            if(isCompleted.HasValue)
+                query = query.Where(t => t.IsCompleted == isCompleted.Value);
+
+            if(dueBefore.HasValue)
+                query = query.Where(t=>t.DueDate <= dueBefore.Value);
+
+            if(!string.IsNullOrEmpty(search))
+                query = query.Where(t =>
+                t.Title.Contains(search) || (t.Description != null && t.Description.Contains(search)));
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                bool ascending = order?.ToLower() == "asc";
+
+                query = sortBy.ToLower() switch
+                {
+                    "title" => ascending ? query.OrderBy(t => t.Title) : query.OrderByDescending(t => t.Title),
+                    "duedate" => ascending ? query.OrderBy(t => t.DueDate) : query.OrderByDescending(t => t.DueDate),
+                    "iscompleted" => ascending ? query.OrderBy(t => t.IsCompleted) : query.OrderByDescending(t => t.IsCompleted),
+                    _ => query.OrderBy(t => t.Id)
+                };
+            }
+            else
+            {
+                query = query.OrderBy(t => t.Id);
+            }
+                var tasks = await query.ToListAsync();
+
             return Ok(tasks);
         }
 
