@@ -103,7 +103,7 @@ A token lejárata után egyelőre a kliens újra bejelentkezésre kényszerül.
 
 ## 🌍 Frontend integráció
 
-A backendhez készül egy React alapú frontend is:
+A backendhez készül egy React+Tailwind alapú frontend is:
 👉[Task Manager Frontend](https://github.com/Riptir3/task-manager-frontend). 
 A két alkalmazás Axios-on keresztül kommunikál, a `https://localhost:7242/api/...` végpontokat használva.
 
@@ -134,3 +134,8 @@ https://localhost:7242
 ```bash
 https://localhost:7242/swagger
 ```
+
+## Kapcsolat
+
+Fejlesztő: **Riptir3 (Bence)**  
+GitHub: [github.com/Riptir3](https://github.com/Riptir3)
