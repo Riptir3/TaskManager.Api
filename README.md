@@ -30,9 +30,9 @@ A cél egy modern, biztonságos RESTful API létrehozása, amelyet egy React fro
 - **Entity Framework Core**
 - **SQL Server (LocalDB)**
 - **JWT (JSON Web Token)**
-- **AutoMapper**
 - **Dependency Injection**
-- **CORS Middleware**
+- **CORS Middleware
+- **Axios**
 
 ---
 
@@ -42,30 +42,31 @@ A cél egy modern, biztonságos RESTful API létrehozása, amelyet egy React fro
 TaskManagerAPI/
 │
 ├── Controllers/
-│ ├── UsersController.cs
-│ └── TasksController.cs
+│ ├── UsersController.cs -> Felhasználói végpontok ( regisztráció, bejelentkezés ).
+│ └── TasksController.cs -> Felhasználói feladatok végpontjai ( CRUD, keresés/szűrés).
 │
 ├── Data/
-│ ├── AppDbContext.cs
+│ ├── AppDbContext.cs -> Adatbázis konfiguráció.
 │
+├── Filters/
+│ ├── ValidationFilter.cs -> Validációs hibák kezelése.
+│
+├── Middlewares/
+│ ├── ErrorHandlingMiddleware.cs -> Hiba kezelés.
+│ └── ValidationErrorMiddleware.cs -> Validációs hibák eljutatása a frontendre.
+│
+├── Migrations/ -> Adatbázis migrációk.
+|
 ├── Models/
-│ ├── User.cs
-│ └── TaskItem.cs
-│
-├── DTOs/
-│ ├── UserRegisterDto.cs
-│ ├── UserLoginDto.cs
-│ ├── TaskDto.cs
+│ ├── DTOs/ -> Data Transfer Objects.
+│ ├── Entities/ -> Adatbázis modellek.
+│ ├── ApiResponse.cs -> Egyedi response object.
 │
 ├── Services/
-│ ├── ITaskService.cs
-│ ├── IUserService.cs
-│ ├── TaskService.cs
-│ ├── UserService.cs
-│ └── JwtService.cs
+│ ├── JwtService.cs -> JWT token generálás
+│ └── PasswordService.cs -> Jelszó titkosítás és ellenőrzés.
 │
-├── Helpers/
-│ └── PasswordHasher.cs
-│
+├──appsettings.json -> Konfigurációs fájl.
+|
 └── Program.cs
 ```
