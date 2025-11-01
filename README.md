@@ -31,7 +31,7 @@ A cél egy modern, biztonságos RESTful API létrehozása, amelyet egy React fro
 - **SQL Server (LocalDB)**
 - **JWT (JSON Web Token)**
 - **Dependency Injection**
-- **CORS Middleware
+- **CORS Middleware**
 - **Axios**
 
 ---
@@ -100,3 +100,8 @@ Host: localhost:7242
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 A token lejárata után egyelőre a kliens újra bejelentkezésre kényszerül.
+
+## 🌍 Frontend integráció
+
+A backendhez készül egy React alapú frontend is:
+[👉 Task Manager Frontend]([https://www.genome.gov/](https://github.com/Riptir3/task-manager-frontend))
