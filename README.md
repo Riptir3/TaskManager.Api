@@ -70,3 +70,19 @@ TaskManagerAPI/
 |
 └── Program.cs
 ```
+## 🧪 API végpontok
+
+🔹 Felhasználók
+| HTTP metódus | Útvonal                   | Leírás                           |
+| ------------ | ------------------------- | -------------------------------- |
+| `POST`       | `/api/Users/register` | Új felhasználó regisztrálása     |
+| `POST`       | `/api/Users/login`        | Bejelentkezés és token generálás |
+
+🔹 Feladatok (autentikáció szükséges)
+| HTTP metódus | Útvonal           | Leírás                         |
+| ------------ | ----------------- | ------------------------------ |
+| `GET`        | `/api/Tasks`      | Összes feladat lekérdezése     |
+| `GET`        | `/api/Tasks/{id}` | Feladat lekérdezése ID alapján |
+| `POST`       | `/api/Tasks`      | Új feladat létrehozása         |
+| `PUT`        | `/api/Tasks/{id}` | Feladat módosítása             |
+| `DELETE`     | `/api/Tasks/{id}` | Feladat törlése                |
