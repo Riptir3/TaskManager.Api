@@ -86,3 +86,17 @@ TaskManagerAPI/
 | `POST`       | `/api/Tasks`      | Új feladat létrehozása         |
 | `PUT`        | `/api/Tasks/{id}` | Feladat módosítása             |
 | `DELETE`     | `/api/Tasks/{id}` | Feladat törlése                |
+
+## 🔑 JWT hitelesítés
+
+A bejelentkezés után a szerver visszaad egy JWT tokent, amelyet a kliens minden kérésnél a headerben küld el:
+``` makefile
+Authorization: Bearer <token>
+```
+### Példa:
+``` http
+GET /api/Tasks HTTP/1.1
+Host: localhost:7242
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+A token lejárata után egyelőre a kliens újra bejelentkezésre kényszerül.
