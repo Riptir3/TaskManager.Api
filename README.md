@@ -106,3 +106,31 @@ A token lejárata után egyelőre a kliens újra bejelentkezésre kényszerül.
 A backendhez készül egy React alapú frontend is:
 👉[Task Manager Frontend](https://github.com/Riptir3/task-manager-frontend). 
 A két alkalmazás Axios-on keresztül kommunikál, a `https://localhost:7242/api/...` végpontokat használva.
+
+## ⚙️ Telepítés és futtatás
+
+### 1️⃣ Klónozd a repót
+```bash
+git clone https://github.com/Riptir3/TaskManager.Api.git
+cd TaskManager.API
+```
+### 2️⃣ Telepítsd a függőségeket
+```bash
+dotnet build
+```
+### 3️⃣ Adatbázis létrehozása
+```bash
+dotnet ef database update
+```
+### 4️⃣ Futtatás
+```bash
+dotnet run
+```
+### A backend elérhető lesz itt:
+```arduino
+https://localhost:7242
+```
+### Swagger UI:
+```bash
+https://localhost:7242/swagger
+```
